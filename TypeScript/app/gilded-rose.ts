@@ -14,8 +14,8 @@ export class Item {
 const MATURER = 'Aged Brie' // Increases in quality the older it gets
 const MATURES_NEAR_EXPIRY =
   'Backstage passes to a TAFKAL80ETC concert'
-const FIXED_QUALITY_AND_SELLIN =
-  'Sulfuras, Hand of Ragnaros'
+const FIXED_QUALITY = 'Sulfuras, Hand of Ragnaros' // Fixed quality and don't go out of date
+const STALE_FAST = 'Conjured' // Go stale twice as fast
 
 export class GildedRose {
   items: Array<Item>
@@ -38,24 +38,26 @@ export class GildedRose {
             }
           }
         }
-      } else if (
-        quality > 0 &&
-        name != FIXED_QUALITY_AND_SELLIN
-      ) {
+      } else if (quality > 0 && name != FIXED_QUALITY) {
         quality--
       }
-      if (name != FIXED_QUALITY_AND_SELLIN) {
+
+      if (name != FIXED_QUALITY) {
         sellIn--
       }
+      if (quality > 0 && name === STALE_FAST) {
+        quality--
+      }
+
       if (sellIn < 0) {
         if (name === MATURER && quality < 50) {
           quality++
         } else if (name === MATURES_NEAR_EXPIRY) {
-          quality = quality - quality
-        } else if (
-          quality > 0 &&
-          name != FIXED_QUALITY_AND_SELLIN
-        ) {
+          quality = 0
+        } else if (quality > 0 && name != FIXED_QUALITY) {
+          quality--
+        }
+        if (name === STALE_FAST) {
           quality--
         }
       }

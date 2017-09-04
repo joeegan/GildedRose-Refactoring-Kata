@@ -34,20 +34,20 @@ describe('Items', () => {
     expect(items[0].quality).to.equal(6)
   })
 
-  // it(`Conjured items degrade in quality twice as fast as normal items`, () => {
-  //   const inventory = new GildedRose([
-  //     new Item('foo', 2, 40),
-  //   ])
-  //   const items = GildedRose.updateQuality(inventory.items)
-  //   expect(items[0].sellIn).to.equal(1)
-  //   expect(items[0].quality).to.equal(38) // normally just by 2
-  //   inventory.updateQuality()
-  //   expect(items[0].sellIn).to.equal(0)
-  //   expect(items[0].quality).to.equal(36)
-  //   inventory.updateQuality() // then by 4 after sellIn goes minue
-  //   expect(items[0].sellIn).to.equal(-1)
-  //   expect(items[0].quality).to.equal(32)
-  // })
+  it(`Conjured items degrade in quality twice as fast as normal items`, () => {
+    const inventory = new GildedRose([
+      new Item('Conjured', 2, 40),
+    ])
+    let items = GildedRose.updateQuality(inventory.items)
+    expect(items[0].sellIn).to.equal(1)
+    expect(items[0].quality).to.equal(38) // normally just by 2
+    items = GildedRose.updateQuality(items)
+    expect(items[0].sellIn).to.equal(0)
+    expect(items[0].quality).to.equal(36)
+    items = GildedRose.updateQuality(items) // then by 4 after sellIn goes minus
+    expect(items[0].sellIn).to.equal(-1)
+    expect(items[0].quality).to.equal(32)
+  })
 
   it('Quality can never be negative', () => {
     const inventory = new GildedRose([
@@ -62,13 +62,20 @@ describe('Items', () => {
   })
 
   it(`'Aged Brie' increases in Quality the older it gets`, () => {
-    const inventory = new GildedRose([
+    let inventory = new GildedRose([
       new Item('Aged Brie', 10, 10),
     ])
     let items = GildedRose.updateQuality(inventory.items)
     expect(items[0].quality).to.equal(11)
     items = GildedRose.updateQuality(items)
     expect(items[0].quality).to.equal(12)
+
+    // Goes up by two below zero: TODO verify this - perhaps missing from docs
+    inventory = new GildedRose([
+      new Item('Aged Brie', 0, 40),
+    ])
+    items = GildedRose.updateQuality(inventory.items)
+    expect(items[0].quality).to.equal(42)
   })
 
   it(`Quality is limited to fifty`, () => {
