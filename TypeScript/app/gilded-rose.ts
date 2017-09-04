@@ -10,12 +10,83 @@ export class Item {
   }
 }
 
-// Types of items
-const MATURER = 'Aged Brie' // Increases in quality the older it gets
-const MATURES_NEAR_EXPIRY =
-  'Backstage passes to a TAFKAL80ETC concert'
-const FIXED_QUALITY = 'Sulfuras, Hand of Ragnaros' // Fixed quality and don't go out of date
-const STALE_FAST = 'Conjured' // Go stale twice as fast
+const characteristics = new Map([
+  // Increases in quality the older it gets
+  [
+    'Aged Brie',
+    (name, sellIn, quality) => {
+      if (quality < 50) {
+        quality++
+      }
+      sellIn--
+      if (sellIn < 0) {
+        if (quality < 50) {
+          quality++
+        } else if (quality > 0) {
+          quality--
+        }
+      }
+      return new Item(name, sellIn, quality)
+    },
+  ],
+  [
+    'Backstage passes to a TAFKAL80ETC concert',
+    (name, sellIn, quality) => {
+      sellIn--
+      if (quality < 50) {
+        quality++
+        if (sellIn < 10) {
+          quality++
+        }
+        if (sellIn < 5) {
+          quality++
+        }
+      }
+      if (sellIn < 0) {
+        quality = 0
+      }
+      return new Item(name, sellIn, quality)
+    },
+  ],
+  // Fixed quality and don't go out of date
+  [
+    'Sulfuras, Hand of Ragnaros',
+    (name, sellIn, quality) => {
+      return new Item(name, sellIn, 80)
+    },
+  ],
+  // Go stale twice as fast
+  [
+    'Conjured',
+    (name, sellIn, quality) => {
+      sellIn--
+      if (quality > 0) {
+        quality--
+        quality--
+      }
+      if (sellIn < 0) {
+        if (quality > 0) {
+          quality--
+        }
+        quality--
+      }
+      return new Item(name, sellIn, quality)
+    },
+  ],
+  [
+    'default',
+    (name, sellIn, quality) => {
+      if (quality > 0) {
+        quality--
+      }
+      sellIn--
+      if (sellIn < 0 && quality > 0) {
+        quality--
+      }
+      return new Item(name, sellIn, quality)
+    },
+  ],
+])
 
 export class GildedRose {
   items: Array<Item>
@@ -25,43 +96,19 @@ export class GildedRose {
   }
 
   public static updateQuality(items) {
-    return items.map(({ name, quality, sellIn }) => {
-      if ([MATURER, MATURES_NEAR_EXPIRY].includes(name)) {
-        if (quality < 50) {
-          quality++
-          if (name === MATURES_NEAR_EXPIRY) {
-            if (sellIn < 11) {
-              quality++
-            }
-            if (sellIn < 6) {
-              quality++
-            }
-          }
-        }
-      } else if (quality > 0 && name != FIXED_QUALITY) {
-        quality--
+    return items.map(({ name, sellIn, quality }) => {
+      if (characteristics.has(name)) {
+        return characteristics.get(name)(
+          name,
+          sellIn,
+          quality,
+        )
       }
-
-      if (name != FIXED_QUALITY) {
-        sellIn--
-      }
-      if (quality > 0 && name === STALE_FAST) {
-        quality--
-      }
-
-      if (sellIn < 0) {
-        if (name === MATURER && quality < 50) {
-          quality++
-        } else if (name === MATURES_NEAR_EXPIRY) {
-          quality = 0
-        } else if (quality > 0 && name != FIXED_QUALITY) {
-          quality--
-        }
-        if (name === STALE_FAST) {
-          quality--
-        }
-      }
-      return new Item(name, sellIn, quality)
+      return characteristics.get('default')(
+        name,
+        sellIn,
+        quality,
+      )
     })
   }
 }
