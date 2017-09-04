@@ -26,44 +26,44 @@ export class GildedRose {
 
   public static updateQuality(items) {
     return items.map(({ name, quality, sellIn }) => {
-      if (![MATURER, MATURES_NEAR_EXPIRY].includes(name)) {
+      if ([MATURER, MATURES_NEAR_EXPIRY].includes(name)) {
+        if (quality < 50) {
+          quality++
+          if (name === MATURES_NEAR_EXPIRY) {
+            if (sellIn < 11 && quality < 50) {
+              quality++
+            }
+            if (sellIn < 6 && quality < 50) {
+              quality++
+            }
+          }
+        }
+      } else {
         if (
           quality > 0 &&
           name != FIXED_QUALITY_AND_SELLIN
         ) {
-          quality = quality - 1
-        }
-      } else {
-        if (quality < 50) {
-          quality = quality + 1
-          if (name === MATURES_NEAR_EXPIRY) {
-            if (sellIn < 11 && quality < 50) {
-              quality = quality + 1
-            }
-            if (sellIn < 6 && quality < 50) {
-              quality = quality + 1
-            }
-          }
+          quality--
         }
       }
       if (name != FIXED_QUALITY_AND_SELLIN) {
-        sellIn = sellIn - 1
+        sellIn--
       }
       if (sellIn < 0) {
-        if (name != MATURER) {
-          if (name != MATURES_NEAR_EXPIRY) {
+        if (name === MATURER) {
+          if (quality < 50) {
+            quality++
+          }
+        } else {
+          if (name === MATURES_NEAR_EXPIRY) {
+            quality = quality - quality
+          } else {
             if (
               quality > 0 &&
               name != FIXED_QUALITY_AND_SELLIN
             ) {
-              quality = quality - 1
+              quality--
             }
-          } else {
-            quality = quality - quality
-          }
-        } else {
-          if (quality < 50) {
-            quality = quality + 1
           }
         }
       }
