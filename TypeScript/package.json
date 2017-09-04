@@ -7,8 +7,7 @@
     "precompile": "rimraf app/**/*.js test/**/*.js",
     "compile": "tsc",
     "pretest": "rimraf app/**/*.js test/**/*.js",
-    "test": "nyc mocha",
-    "test-watch": "mocha --compilers ts:ts-node/register,tsx:ts-node/register --watch"
+    "test": "nyc mocha"
   },
   "author": "paucls",
   "homepage": "https://github.com/paucls/typescript-mocha-kata-seed",

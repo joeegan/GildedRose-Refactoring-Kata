@@ -24,27 +24,24 @@ export class GildedRose {
     this.items = items
   }
 
-  updateQuality() {
-    this.items.map(({ name, quality }) => {
-      if (name != MATURER && name != MATURES_NEAR_EXPIRY) {
-        if (quality > 0) {
-          if (name != FIXED_QUALITY_AND_SELLIN) {
-            quality = quality - 1
-          }
+  public static updateQuality(items) {
+    return items.map(({ name, quality, sellIn }) => {
+      if (![MATURER, MATURES_NEAR_EXPIRY].includes(name)) {
+        if (
+          quality > 0 &&
+          name != FIXED_QUALITY_AND_SELLIN
+        ) {
+          quality = quality - 1
         }
       } else {
         if (quality < 50) {
           quality = quality + 1
-          if (name == MATURES_NEAR_EXPIRY) {
-            if (sellIn < 11) {
-              if (quality < 50) {
-                quality = quality + 1
-              }
+          if (name === MATURES_NEAR_EXPIRY) {
+            if (sellIn < 11 && quality < 50) {
+              quality = quality + 1
             }
-            if (sellIn < 6) {
-              if (quality < 50) {
-                quality = quality + 1
-              }
+            if (sellIn < 6 && quality < 50) {
+              quality = quality + 1
             }
           }
         }
@@ -55,13 +52,14 @@ export class GildedRose {
       if (sellIn < 0) {
         if (name != MATURER) {
           if (name != MATURES_NEAR_EXPIRY) {
-            if (quality > 0) {
-              if (name != FIXED_QUALITY_AND_SELLIN) {
-                quality = quality - 1
-              }
+            if (
+              quality > 0 &&
+              name != FIXED_QUALITY_AND_SELLIN
+            ) {
+              quality = quality - 1
             }
           } else {
-            quality = quality - item.quality
+            quality = quality - quality
           }
         } else {
           if (quality < 50) {
@@ -69,7 +67,7 @@ export class GildedRose {
           }
         }
       }
-      return { sellIn, quality }
+      return new Item(name, sellIn, quality)
     })
   }
 }
