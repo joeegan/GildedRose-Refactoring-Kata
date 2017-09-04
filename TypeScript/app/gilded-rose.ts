@@ -30,41 +30,33 @@ export class GildedRose {
         if (quality < 50) {
           quality++
           if (name === MATURES_NEAR_EXPIRY) {
-            if (sellIn < 11 && quality < 50) {
+            if (sellIn < 11) {
               quality++
             }
-            if (sellIn < 6 && quality < 50) {
+            if (sellIn < 6) {
               quality++
             }
           }
         }
-      } else {
-        if (
-          quality > 0 &&
-          name != FIXED_QUALITY_AND_SELLIN
-        ) {
-          quality--
-        }
+      } else if (
+        quality > 0 &&
+        name != FIXED_QUALITY_AND_SELLIN
+      ) {
+        quality--
       }
       if (name != FIXED_QUALITY_AND_SELLIN) {
         sellIn--
       }
       if (sellIn < 0) {
-        if (name === MATURER) {
-          if (quality < 50) {
-            quality++
-          }
-        } else {
-          if (name === MATURES_NEAR_EXPIRY) {
-            quality = quality - quality
-          } else {
-            if (
-              quality > 0 &&
-              name != FIXED_QUALITY_AND_SELLIN
-            ) {
-              quality--
-            }
-          }
+        if (name === MATURER && quality < 50) {
+          quality++
+        } else if (name === MATURES_NEAR_EXPIRY) {
+          quality = quality - quality
+        } else if (
+          quality > 0 &&
+          name != FIXED_QUALITY_AND_SELLIN
+        ) {
+          quality--
         }
       }
       return new Item(name, sellIn, quality)
