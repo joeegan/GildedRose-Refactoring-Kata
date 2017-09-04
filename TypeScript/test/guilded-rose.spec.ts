@@ -34,6 +34,21 @@ describe('Items', () => {
     expect(item.quality).to.equal(6)
   })
 
+  // it(`Conjured items degrade in quality twice as fast as normal items`, () => {
+  //   const inventory = new GildedRose([
+  //     new Item('foo', 2, 40),
+  //   ])
+  //   const [item] = inventory.updateQuality()
+  //   expect(item.sellIn).to.equal(1)
+  //   expect(item.quality).to.equal(38) // normally just by 2
+  //   inventory.updateQuality()
+  //   expect(item.sellIn).to.equal(0)
+  //   expect(item.quality).to.equal(36)
+  //   inventory.updateQuality() // then by 4 after sellIn goes minue
+  //   expect(item.sellIn).to.equal(-1)
+  //   expect(item.quality).to.equal(32)
+  // })
+
   it('Quality can never be negative', () => {
     const inventory = new GildedRose([
       new Item('foo', 0, 0),
@@ -68,14 +83,14 @@ describe('Items', () => {
 
   it(`Sulfuras never lose quality or have their sellIn decreased`, () => {
     const inventory = new GildedRose([
-      new Item('Sulfuras, Hand of Ragnaros', 10, 20),
+      new Item('Sulfuras, Hand of Ragnaros', 10, 80),
     ])
     const [item] = inventory.updateQuality()
     expect(item.sellIn).to.equal(10)
-    expect(item.quality).to.equal(20)
+    expect(item.quality).to.equal(80)
     inventory.updateQuality()
     expect(item.sellIn).to.equal(10)
-    expect(item.quality).to.equal(20)
+    expect(item.quality).to.equal(80)
   })
 
   it(`Backstage passes increase in quality when sellIn is less than ten`, () => {

@@ -1,69 +1,75 @@
 export class Item {
-    name: string;
-    sellIn: number;
-    quality: number;
+  name: string
+  sellIn: number
+  quality: number
 
-    constructor(name, sellIn, quality) {
-        this.name = name;
-        this.sellIn = sellIn;
-        this.quality = quality;
-    }
+  constructor(name, sellIn, quality) {
+    this.name = name
+    this.sellIn = sellIn
+    this.quality = quality
+  }
 }
 
+// Types of items
+const MATURER = 'Aged Brie' // Increases in quality the older it gets
+const MATURES_NEAR_EXPIRY =
+  'Backstage passes to a TAFKAL80ETC concert'
+const FIXED_QUALITY_AND_SELLIN =
+  'Sulfuras, Hand of Ragnaros'
+
 export class GildedRose {
-    items: Array<Item>;
+  items: Array<Item>
 
-    constructor(items = []) {
-        this.items = items;
-    }
+  constructor(items = []) {
+    this.items = items
+  }
 
-    updateQuality() {
-        for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-                if (this.items[i].quality > 0) {
-                    if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                        this.items[i].quality = this.items[i].quality - 1
-                    }
-                }
-            } else {
-                if (this.items[i].quality < 50) {
-                    this.items[i].quality = this.items[i].quality + 1
-                    if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-                        if (this.items[i].sellIn < 11) {
-                            if (this.items[i].quality < 50) {
-                                this.items[i].quality = this.items[i].quality + 1
-                            }
-                        }
-                        if (this.items[i].sellIn < 6) {
-                            if (this.items[i].quality < 50) {
-                                this.items[i].quality = this.items[i].quality + 1
-                            }
-                        }
-                    }
-                }
-            }
-            if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                this.items[i].sellIn = this.items[i].sellIn - 1;
-            }
-            if (this.items[i].sellIn < 0) {
-                if (this.items[i].name != 'Aged Brie') {
-                    if (this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-                        if (this.items[i].quality > 0) {
-                            if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                                this.items[i].quality = this.items[i].quality - 1
-                            }
-                        }
-                    } else {
-                        this.items[i].quality = this.items[i].quality - this.items[i].quality
-                    }
-                } else {
-                    if (this.items[i].quality < 50) {
-                        this.items[i].quality = this.items[i].quality + 1
-                    }
-                }
-            }
+  updateQuality() {
+    this.items.map(({ name, quality }) => {
+      if (name != MATURER && name != MATURES_NEAR_EXPIRY) {
+        if (quality > 0) {
+          if (name != FIXED_QUALITY_AND_SELLIN) {
+            quality = quality - 1
+          }
         }
-
-        return this.items;
-    }
+      } else {
+        if (quality < 50) {
+          quality = quality + 1
+          if (name == MATURES_NEAR_EXPIRY) {
+            if (sellIn < 11) {
+              if (quality < 50) {
+                quality = quality + 1
+              }
+            }
+            if (sellIn < 6) {
+              if (quality < 50) {
+                quality = quality + 1
+              }
+            }
+          }
+        }
+      }
+      if (name != FIXED_QUALITY_AND_SELLIN) {
+        sellIn = sellIn - 1
+      }
+      if (sellIn < 0) {
+        if (name != MATURER) {
+          if (name != MATURES_NEAR_EXPIRY) {
+            if (quality > 0) {
+              if (name != FIXED_QUALITY_AND_SELLIN) {
+                quality = quality - 1
+              }
+            }
+          } else {
+            quality = quality - item.quality
+          }
+        } else {
+          if (quality < 50) {
+            quality = quality + 1
+          }
+        }
+      }
+      return { sellIn, quality }
+    })
+  }
 }
